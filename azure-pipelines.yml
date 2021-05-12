@@ -66,3 +66,26 @@ stages:
 
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: drop
+# Second stage - deploy web app to Azure App Service
+- stage: 'Deploy'
+  displayName: 'Deploy the web application'
+  dependsOn: Build # Only run if Build succeeds
+  jobs:
+  - deployment: Deploy
+    pool:
+      vmImage: 'ubuntu-18.04'
+    environment: dev
+    variables: # Select variable group from AZDO (under Library) to use in the deployment
+    - group: Release
+    strategy:
+      runOnce:
+        deploy:
+          steps: # Download auto fetches latest artifact from AZDO and downloads the zip artifact (the below comment can be used to specify a version)
+          - download: current # Shortcut for DownloadPipelineArtifact@2 -> inputs: -> buildType: current, artifact: 'drop'
+            artifact: drop
+          - task: AzureWebApp@1 # deploy the contents of MyPackage.zip to an App Service instance named MyWebApp
+            displayName: 'Azure App Service Deploy: website'
+            inputs:
+              azureSubscription: 'Resource Manager - Tailspin - Space Game'
+              appName: '$(WebAppName)' # Fetched from pipeline variables to refer to the webapp name in Azure
+              package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
