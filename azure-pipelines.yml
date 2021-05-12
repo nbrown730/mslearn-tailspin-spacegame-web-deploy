@@ -66,7 +66,7 @@ stages:
 
     - publish: '$(Build.ArtifactStagingDirectory)'
       artifact: drop
-# Second stage - deploy web app to Azure App Service
+# Second stage - deploy web app to Azure App Service (configured in Azure portal - resource groups tools etc), need to have subscription setup in AZDO project settings (service connections > Azure Resource manager)
 - stage: 'Deploy'
   displayName: 'Deploy the web application'
   dependsOn: Build # Only run if Build succeeds
@@ -74,7 +74,7 @@ stages:
   - deployment: Deploy
     pool:
       vmImage: 'ubuntu-18.04'
-    environment: dev
+    environment: dev # Defines an AZDO environment (non gui and version controlled way) to describe where artifact will be deployed
     variables: # Select variable group from AZDO (under Library) to use in the deployment
     - group: Release
     strategy:
