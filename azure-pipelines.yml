@@ -87,5 +87,5 @@ stages:
             displayName: 'Azure App Service Deploy: website'
             inputs:
               azureSubscription: 'Resource Manager - Tailspin - Space Game'
-              appName: '$(WebAppName)' # Fetched from pipeline variables to refer to the webapp name in Azure
+              appName: '$(WebAppNameDev)' # Fetched from pipeline variables to refer to the webapp name in Azure
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
