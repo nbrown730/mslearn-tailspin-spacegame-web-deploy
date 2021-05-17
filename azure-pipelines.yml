@@ -103,7 +103,7 @@ stages:
       vmImage: 'windows-2019'
     variables:
     - group: 'Release'
-    environment: 'dbaverificationscript'
+    environment: 'dbaverificationscript' # Uses this environment for manual review of the SQL generator script by DBA
     strategy:
       runOnce:
         deploy:
