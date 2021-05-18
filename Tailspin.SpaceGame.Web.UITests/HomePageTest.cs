@@ -9,6 +9,7 @@ using System.Collections;
 
 namespace UITests
 {
+    // String variable used to denote the browsers we will test on (one instance of the class per TestFixture)
     [TestFixture("Chrome")]
     [TestFixture("Firefox")]
     [TestFixture("Edge")]
@@ -17,11 +18,13 @@ namespace UITests
         private string browser;
         private IWebDriver driver;
 
+        // string browser is just the name of the current test fixture ('Chrome', 'Firefox', 'Edge')
         public HomePageTest(string browser)
         {
             this.browser = browser;
         }
 
+        // OneTimeSetup runs once per test fixture
         [OneTimeSetUp]
         public void Setup()
         {
@@ -157,6 +160,7 @@ namespace UITests
             IJavaScriptExecutor js = driver as IJavaScriptExecutor;
 
             // Through JavaScript, run the click() method on the underlying HTML object.
+            // No need to scroll the element into view in order to click it
             js.ExecuteScript("arguments[0].click();", element);
         }
     }
