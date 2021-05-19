@@ -132,7 +132,7 @@ stages:
               azureSubscription: 'Resource Manager - Tailspin - Space Game'
               deployToSlotOrASE: 'true' # Say we are deploying this to an existing deployment slot...
               resourceGroupName: 'tailspin-space-game-rg' # in this resource group
-              slotName: 'swap' # Define the slotname to deploy to
+              slotName: 'swap' # Define the slotname to deploy to (deploy latest code to swap)
               appName: '$(WebAppNameStaging)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
           - task: AzureAppServiceManage@0
@@ -143,4 +143,7 @@ stages:
               webAppName: '$(WebAppNameStaging)'
               sourceSlot: 'swap' # Slots to swap
               targetSlot: 'production'
-              action: 'Swap Slots' # Swap the source and target slots around
+              action: 'Swap Slots' # Swap the source and target slots around (so that swap gets swapped to prod)
+              # meaning that we deploy latest code to swap, pull N-1 code from prod (prod becomes swap) and the latest
+              # code is running in production that was swap before (prod slot always points to the latest deployment
+              # with the swap slot always pointing to the latest - 1 deployment)
