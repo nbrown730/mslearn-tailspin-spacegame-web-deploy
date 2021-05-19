@@ -110,7 +110,6 @@ stages:
               azureSubscription: 'Resource Manager - Tailspin - Space Game'
               appName: '$(WebAppNameTest)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
-
 - stage: 'Staging'
   displayName: 'Deploy to the staging environment'
   dependsOn: Test
@@ -125,11 +124,23 @@ stages:
       runOnce:
         deploy:
           steps:
-          - download: current
+          - download: current # download the build artifact
             artifact: drop
-          - task: AzureWebApp@1
+          - task: AzureWebApp@1 # Use Azure Web app command to deploy the website
             displayName: 'Azure App Service Deploy: website'
             inputs:
               azureSubscription: 'Resource Manager - Tailspin - Space Game'
+              deployToSlotOrASE: 'true' # Say we are deploying this to an existing deployment slot...
+              resourceGroupName: 'tailspin-space-game-rg' # in this resource group
+              slotName: 'swap' # Define the slotname to deploy to
               appName: '$(WebAppNameStaging)'
               package: '$(Pipeline.Workspace)/drop/$(buildConfiguration)/*.zip'
+          - task: AzureAppServiceManage@0
+            displayName: 'Swap deployment slots'
+            inputs:
+              azureSubscription: 'Resource Manager - Tailspin - Space Game'
+              resourceGroupName: 'tailspin-space-game-rg'
+              webAppName: '$(WebAppNameStaging)'
+              sourceSlot: 'swap' # Slots to swap
+              targetSlot: 'production'
+              action: 'Swap Slots' # Swap the source and target slots around
